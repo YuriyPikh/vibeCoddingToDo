@@ -7,10 +7,28 @@
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
+    <% const completionRate = page.stats.total === 0 ? 0 : Math.round((page.stats.completed / page.stats.total) * 100); %>
     <div class="page-shell">
+      <div class="ambient-orb ambient-orb-left"></div>
+      <div class="ambient-orb ambient-orb-right"></div>
       <main class="app-card">
         <section class="hero">
+          <p class="eyebrow">VibeCoddedToDo</p>
           <h1>Organize the day without the clutter.</h1>
+          <p class="hero-copy">
+            A focused todo board for small lab tasks, quick wins, and the next thing
+            you actually need to finish.
+          </p>
+          <div class="hero-strip">
+            <div class="hero-chip">
+              <span class="chip-label">Completion</span>
+              <strong><%= completionRate %>%</strong>
+            </div>
+            <div class="hero-chip">
+              <span class="chip-label">Focus</span>
+              <strong><%= page.stats.remaining === 0 && page.stats.total > 0 ? "Clear" : "In Motion" %></strong>
+            </div>
+          </div>
         </section>
 
         <section class="composer">
@@ -29,9 +47,21 @@
             <button type="submit">Add Task</button>
           </form>
           <div class="composer-meta">
-            <span><%= page.stats.remaining %> open</span>
-            <span><%= page.stats.completed %> done</span>
-            <span><%= page.stats.total %> total</span>
+            <article class="stat-pill">
+              <span class="stat-kicker">Open</span>
+              <strong><%= page.stats.remaining %></strong>
+            </article>
+            <article class="stat-pill">
+              <span class="stat-kicker">Done</span>
+              <strong><%= page.stats.completed %></strong>
+            </article>
+            <article class="stat-pill">
+              <span class="stat-kicker">Total</span>
+              <strong><%= page.stats.total %></strong>
+            </article>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <span class="progress-fill" style="width: <%= completionRate %>%"></span>
           </div>
           <% if (page.errorMessage) { %>
             <p class="status-message"><%= page.errorMessage %></p>
@@ -40,12 +70,16 @@
 
         <section class="todo-panel">
           <div class="panel-head">
-            <h2>Tasks</h2>
-            <p>Click a checkbox to complete. Remove anything that no longer matters.</p>
+            <div>
+              <h2>Tasks</h2>
+              <p>Click a checkbox to complete. Remove anything that no longer matters.</p>
+            </div>
+            <span class="panel-badge"><%= page.stats.total %> items</span>
           </div>
 
           <% if (page.todos.length === 0) { %>
             <div class="empty-state">
+              <div class="empty-icon"></div>
               <strong>No tasks yet.</strong>
               <span>Start with one clear next action.</span>
             </div>
@@ -70,9 +104,14 @@
                     </small>
                   </div>
 
-                  <form action="/todos/<%= todo.id %>/delete" method="post">
-                    <button type="submit" class="delete-button">Delete</button>
-                  </form>
+                  <div class="todo-actions">
+                    <span class="state-pill <%= todo.isCompleted ? 'is-complete' : 'is-active' %>">
+                      <%= todo.isCompleted ? "Done" : "Active" %>
+                    </span>
+                    <form action="/todos/<%= todo.id %>/delete" method="post">
+                      <button type="submit" class="delete-button">Delete</button>
+                    </form>
+                  </div>
                 </li>
               <% }) %>
             </ul>
@@ -83,4 +122,3 @@
     <script src="/js/app.js"></script>
   </body>
 </html>
-
