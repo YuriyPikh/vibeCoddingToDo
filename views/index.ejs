@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo MVP</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <main class="app-card">
+        <section class="hero">
+          <h1>Organize the day without the clutter.</h1>
+        </section>
+
+        <section class="composer">
+          <form action="/todos" method="post" class="composer-form">
+            <label class="sr-only" for="title">New task</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              maxlength="<%= page.titleLimit %>"
+              placeholder="Add a task worth finishing..."
+              value="<%= page.draftTitle %>"
+              autocomplete="off"
+              required
+            />
+            <button type="submit">Add Task</button>
+          </form>
+          <div class="composer-meta">
+            <span><%= page.stats.remaining %> open</span>
+            <span><%= page.stats.completed %> done</span>
+            <span><%= page.stats.total %> total</span>
+          </div>
+          <% if (page.errorMessage) { %>
+            <p class="status-message"><%= page.errorMessage %></p>
+          <% } %>
+        </section>
+
+        <section class="todo-panel">
+          <div class="panel-head">
+            <h2>Tasks</h2>
+            <p>Click a checkbox to complete. Remove anything that no longer matters.</p>
+          </div>
+
+          <% if (page.todos.length === 0) { %>
+            <div class="empty-state">
+              <strong>No tasks yet.</strong>
+              <span>Start with one clear next action.</span>
+            </div>
+          <% } else { %>
+            <ul class="todo-list">
+              <% page.todos.forEach((todo) => { %>
+                <li class="todo-item <%= todo.isCompleted ? 'is-complete' : '' %>">
+                  <form action="/todos/<%= todo.id %>/toggle" method="post">
+                    <button
+                      type="submit"
+                      class="toggle-button"
+                      aria-label="<%= todo.isCompleted ? 'Mark as active' : 'Mark as complete' %>"
+                    >
+                      <span></span>
+                    </button>
+                  </form>
+
+                  <div class="todo-copy">
+                    <p><%= todo.title %></p>
+                    <small>
+                      Added <%= new Date(todo.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" }) %>
+                    </small>
+                  </div>
+
+                  <form action="/todos/<%= todo.id %>/delete" method="post">
+                    <button type="submit" class="delete-button">Delete</button>
+                  </form>
+                </li>
+              <% }) %>
+            </ul>
+          <% } %>
+        </section>
+      </main>
+    </div>
+    <script src="/js/app.js"></script>
+  </body>
+</html>
+
