@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Todo MVP</title>
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="<%= page.assetPaths.stylesheet %>" />
   </head>
   <body>
     <% const completionRate = page.stats.total === 0 ? 0 : Math.round((page.stats.completed / page.stats.total) * 100); %>
@@ -13,7 +13,7 @@
       <div class="ambient-orb ambient-orb-right"></div>
       <main class="app-card">
         <section class="hero">
-          <p class="eyebrow">VibeCoddedToDo</p>
+          <p class="eyebrow">VibeCoddedToDo <%= page.buildType %></p>
           <h1>Organize the day without the clutter.</h1>
           <p class="hero-copy">
             A focused todo board for small lab tasks, quick wins, and the next thing
@@ -32,7 +32,7 @@
         </section>
 
         <section class="composer">
-          <form action="/todos" method="post" class="composer-form">
+          <form action="/todos" method="post" class="composer-form" data-testid="todo-form">
             <label class="sr-only" for="title">New task</label>
             <input
               id="title"
@@ -47,15 +47,15 @@
             <button type="submit">Add Task</button>
           </form>
           <div class="composer-meta">
-            <article class="stat-pill">
+            <article class="stat-pill" data-testid="stat-open">
               <span class="stat-kicker">Open</span>
               <strong><%= page.stats.remaining %></strong>
             </article>
-            <article class="stat-pill">
+            <article class="stat-pill" data-testid="stat-done">
               <span class="stat-kicker">Done</span>
               <strong><%= page.stats.completed %></strong>
             </article>
-            <article class="stat-pill">
+            <article class="stat-pill" data-testid="stat-total">
               <span class="stat-kicker">Total</span>
               <strong><%= page.stats.total %></strong>
             </article>
@@ -84,13 +84,18 @@
               <span>Start with one clear next action.</span>
             </div>
           <% } else { %>
-            <ul class="todo-list">
+            <ul class="todo-list" data-testid="todo-list">
               <% page.todos.forEach((todo) => { %>
-                <li class="todo-item <%= todo.isCompleted ? 'is-complete' : '' %>">
+                <li
+                  class="todo-item <%= todo.isCompleted ? 'is-complete' : '' %>"
+                  data-testid="todo-item"
+                  data-title="<%= todo.title %>"
+                >
                   <form action="/todos/<%= todo.id %>/toggle" method="post">
                     <button
                       type="submit"
                       class="toggle-button"
+                      data-testid="toggle-todo"
                       aria-label="<%= todo.isCompleted ? 'Mark as active' : 'Mark as complete' %>"
                     >
                       <span></span>
@@ -109,7 +114,7 @@
                       <%= todo.isCompleted ? "Done" : "Active" %>
                     </span>
                     <form action="/todos/<%= todo.id %>/delete" method="post">
-                      <button type="submit" class="delete-button">Delete</button>
+                      <button type="submit" class="delete-button" data-testid="delete-todo">Delete</button>
                     </form>
                   </div>
                 </li>
@@ -119,6 +124,6 @@
         </section>
       </main>
     </div>
-    <script src="/js/app.js"></script>
+    <script src="<%= page.assetPaths.appScript %>"></script>
   </body>
 </html>

@@ -1,4 +1,5 @@
 const { TITLE_LIMIT, validateTitle } = require("../validation/todoValidation");
+const { env } = require("../config/env");
 
 function createTodoController({ todoService }) {
   async function renderIndex(res, state = {}) {
@@ -7,6 +8,8 @@ function createTodoController({ todoService }) {
     res.render("index", {
       page: {
         titleLimit: TITLE_LIMIT,
+        buildType: env.buildType,
+        assetPaths: env.assetPaths,
         errorMessage: "",
         draftTitle: "",
         ...state,
@@ -72,4 +75,3 @@ function createTodoController({ todoService }) {
 module.exports = {
   createTodoController,
 };
-

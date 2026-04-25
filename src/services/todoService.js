@@ -14,7 +14,7 @@ class TodoService {
 
     try {
       await fs.access(this.filePath);
-    } catch (error) {
+    } catch {
       await fs.writeFile(this.filePath, "[]\n", "utf8");
     }
   }
@@ -98,4 +98,3 @@ class TodoService {
 module.exports = {
   TodoService,
 };
-
