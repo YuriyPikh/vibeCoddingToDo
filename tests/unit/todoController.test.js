@@ -20,6 +20,10 @@ function createResponseDouble() {
       this.redirectTarget = target;
       return this;
     },
+    sendStatus(code) {
+      this.statusCode = code;
+      return this;
+    },
   };
 }
 
@@ -81,6 +85,19 @@ describe("todoController", () => {
     expect(res.redirectTarget).toBe("/");
   });
 
+  it("returns 404 when toggling a missing todo", async () => {
+    const todoService = {
+      toggle: vi.fn().mockResolvedValue(null),
+    };
+    const controller = createTodoController({ todoService });
+    const res = createResponseDouble();
+
+    await controller.toggle({ params: { id: "missing-id" } }, res, vi.fn());
+
+    expect(res.statusCode).toBe(404);
+    expect(res.redirectTarget).toBeNull();
+  });
+
   it("passes service failures to next in each action", async () => {
     const next = vi.fn();
     const failure = new Error("boom");
@@ -104,4 +121,3 @@ describe("todoController", () => {
     expect(next).toHaveBeenNthCalledWith(4, failure);
   });
 });
-

@@ -54,7 +54,13 @@ function createTodoController({ todoService }) {
 
     toggle: async (req, res, next) => {
       try {
-        await todoService.toggle(req.params.id);
+        const todo = await todoService.toggle(req.params.id);
+
+        if (!todo) {
+          res.sendStatus(404);
+          return;
+        }
+
         res.redirect("/");
       } catch (error) {
         next(error);
