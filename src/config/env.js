@@ -1,11 +1,30 @@
 const fs = require("fs");
 const path = require("path");
 
-const rootDir = path.resolve(__dirname, "../..");
+const rootDir = resolveRootDir();
 const vercelTempTodosFile = "/tmp/todos.json";
 loadEnvFiles();
 const dataDir = path.join(rootDir, "data");
 const buildMeta = readBuildMeta();
+
+function resolveRootDir() {
+  const candidateDirectories = [
+    path.resolve(__dirname, "../.."),
+    process.cwd(),
+  ];
+
+  for (const candidate of candidateDirectories) {
+    if (hasRuntimeFiles(candidate)) {
+      return candidate;
+    }
+  }
+
+  return candidateDirectories[0];
+}
+
+function hasRuntimeFiles(directoryPath) {
+  return ["views", "public"].every((entry) => fs.existsSync(path.join(directoryPath, entry)));
+}
 
 function loadEnvFiles() {
   const mode = resolveEnvMode(process.env.NODE_ENV, process.env.BUILD_TYPE);
