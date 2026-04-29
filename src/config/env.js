@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const rootDir = path.resolve(__dirname, "../..");
+const vercelTempTodosFile = "/tmp/todos.json";
 loadEnvFiles();
 const dataDir = path.join(rootDir, "data");
 const buildMeta = readBuildMeta();
@@ -88,8 +89,16 @@ function resolvePort(rawValue) {
   return parsed;
 }
 
-function resolveTodosFile(rawValue) {
+function isVercelRuntime(runtimeEnv = process.env) {
+  return runtimeEnv.VERCEL === "1" || typeof runtimeEnv.VERCEL_ENV === "string";
+}
+
+function resolveTodosFile(rawValue, runtimeEnv = process.env) {
   if (!rawValue) {
+    if (isVercelRuntime(runtimeEnv)) {
+      return vercelTempTodosFile;
+    }
+
     return path.join(dataDir, "todos.json");
   }
 
@@ -137,6 +146,7 @@ function resolveAssetPath(rawAssets, sourcePath) {
 module.exports = {
   resolvePort,
   resolveTodosFile,
+  isVercelRuntime,
   resolveUiBadgeWord,
   resolveAssetPath,
   resolveAssetPaths,

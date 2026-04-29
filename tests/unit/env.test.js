@@ -9,6 +9,8 @@ describe("env config helpers", () => {
     delete process.env.NODE_ENV;
     delete process.env.UI_BADGE_WORD;
     delete process.env.BUILD_TYPE;
+    delete process.env.VERCEL;
+    delete process.env.VERCEL_ENV;
     delete require.cache[envModulePath];
   });
 
@@ -33,6 +35,13 @@ describe("env config helpers", () => {
     expect(resolveTodosFile(path.join("tmp", "todos.json"))).toBe(
       path.join(env.rootDir, "tmp", "todos.json"),
     );
+  });
+
+  it("uses /tmp for the default todo file on Vercel", () => {
+    const { resolveTodosFile } = require("../../src/config/env");
+
+    expect(resolveTodosFile(undefined, { VERCEL: "1" })).toBe("/tmp/todos.json");
+    expect(resolveTodosFile(undefined, { VERCEL_ENV: "production" })).toBe("/tmp/todos.json");
   });
 
   it("keeps absolute todo file paths unchanged", () => {
