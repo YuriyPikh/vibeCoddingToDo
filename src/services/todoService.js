@@ -14,7 +14,7 @@ class TodoService {
 
     try {
       await fs.access(this.filePath);
-    } catch (error) {
+    } catch {
       await fs.writeFile(this.filePath, "[]\n", "utf8");
     }
   }
@@ -41,9 +41,18 @@ class TodoService {
 
   async getDashboard() {
     const todos = await this.readTodos();
-    const orderedTodos = [...todos].sort((left, right) =>
-      right.createdAt.localeCompare(left.createdAt),
-    );
+    const orderedTodos = todos
+      .map((todo, index) => ({ todo, index }))
+      .sort((left, right) => {
+        const createdAtComparison = right.todo.createdAt.localeCompare(left.todo.createdAt);
+
+        if (createdAtComparison !== 0) {
+          return createdAtComparison;
+        }
+
+        return right.index - left.index;
+      })
+      .map(({ todo }) => todo);
 
     return {
       todos: orderedTodos,
@@ -98,4 +107,3 @@ class TodoService {
 module.exports = {
   TodoService,
 };
-

@@ -1,4 +1,8 @@
 node_modules/
-.env
+!.env
+!.env.staging
+!.env.production
 npm-debug.log*
-
+playwright-report/
+test-results/
+coverage/

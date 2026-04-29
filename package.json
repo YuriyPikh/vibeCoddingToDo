@@ -5,7 +5,20 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "build": "node scripts/build.mjs",
+    "build:dev": "node scripts/build-variant.mjs development Sandbox",
+    "build:staging": "node scripts/build-variant.mjs staging Review",
+    "build:prod": "node scripts/build-variant.mjs production Live",
+    "preview": "node dist/src/server.js",
+    "lint": "eslint .",
+    "start": "node src/server.js",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "vitest run",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:install": "playwright install chromium"
   },
   "engines": {
     "node": ">=18"
@@ -17,7 +30,13 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.54.2",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^10.2.0",
+    "globals": "^17.5.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.1",
+    "vitest": "^3.2.4"
   }
 }
-
