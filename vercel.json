@@ -3,8 +3,8 @@
   "version": 2,
   "framework": "express",
   "functions": {
-    "src/app.js": {
-      "includeFiles": "views/**"
+    "dist/src/app.js": {
+      "includeFiles": "dist/views/**"
     }
   }
 }
