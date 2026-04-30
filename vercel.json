@@ -3,14 +3,8 @@
   "version": 2,
   "framework": "express",
   "functions": {
-    "api/index.js": {
+    "src/app.js": {
       "includeFiles": "views/**"
     }
-  },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api"
-    }
-  ]
+  }
 }
