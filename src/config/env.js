@@ -1,10 +1,30 @@
 const fs = require("fs");
 const path = require("path");
 
-const rootDir = path.resolve(__dirname, "../..");
+const rootDir = resolveRootDir();
+const vercelTempTodosFile = "/tmp/todos.json";
 loadEnvFiles();
 const dataDir = path.join(rootDir, "data");
 const buildMeta = readBuildMeta();
+
+function resolveRootDir() {
+  const candidateDirectories = [
+    path.resolve(__dirname, "../.."),
+    process.cwd(),
+  ];
+
+  for (const candidate of candidateDirectories) {
+    if (hasRuntimeFiles(candidate)) {
+      return candidate;
+    }
+  }
+
+  return candidateDirectories[0];
+}
+
+function hasRuntimeFiles(directoryPath) {
+  return ["views", "public"].every((entry) => fs.existsSync(path.join(directoryPath, entry)));
+}
 
 function loadEnvFiles() {
   const mode = resolveEnvMode(process.env.NODE_ENV, process.env.BUILD_TYPE);
@@ -88,8 +108,16 @@ function resolvePort(rawValue) {
   return parsed;
 }
 
-function resolveTodosFile(rawValue) {
+function isVercelRuntime(runtimeEnv = process.env) {
+  return runtimeEnv.VERCEL === "1" || typeof runtimeEnv.VERCEL_ENV === "string";
+}
+
+function resolveTodosFile(rawValue, runtimeEnv = process.env) {
   if (!rawValue) {
+    if (isVercelRuntime(runtimeEnv)) {
+      return vercelTempTodosFile;
+    }
+
     return path.join(dataDir, "todos.json");
   }
 
@@ -137,6 +165,7 @@ function resolveAssetPath(rawAssets, sourcePath) {
 module.exports = {
   resolvePort,
   resolveTodosFile,
+  isVercelRuntime,
   resolveUiBadgeWord,
   resolveAssetPath,
   resolveAssetPaths,

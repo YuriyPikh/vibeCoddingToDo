@@ -13,7 +13,7 @@ module.exports = [
   },
   js.configs.recommended,
   {
-    files: ["src/**/*.js", "playwright.config.js", "vitest.config.js", "eslint.config.js"],
+    files: ["api/**/*.js", "src/**/*.js", "playwright.config.js", "vitest.config.js", "eslint.config.js"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "commonjs",

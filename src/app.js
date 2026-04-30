@@ -30,46 +30,50 @@ function createApp(options = {}) {
   app.use(createRoutes({ todoController }));
 
   app.use((req, res) => {
-      res.status(404).render("index", {
-        page: {
-          todos: [],
-          buildType: env.buildType,
-          assetPaths: env.assetPaths,
-          stats: {
-            total: 0,
-            remaining: 0,
-            completed: 0,
-        },
-        titleLimit: 80,
-        draftTitle: "",
-        errorMessage: "That page does not exist.",
-      },
-    });
+    renderShell(res, 404, "That page does not exist.");
   });
 
   app.use((error, req, res, _next) => {
     console.error(error);
-      res.status(500).render("index", {
-        page: {
-          todos: [],
-          buildType: env.buildType,
-          assetPaths: env.assetPaths,
-          stats: {
-            total: 0,
-            remaining: 0,
-            completed: 0,
-        },
-        titleLimit: 80,
-        draftTitle: "",
-        errorMessage: "Something went wrong while loading the app.",
-      },
-    });
+    renderShell(res, 500, "Something went wrong while loading the app.");
   });
 
   return app;
 }
 
-module.exports = {
-  app: createApp(),
-  createApp,
-};
+function renderShell(res, statusCode, errorMessage) {
+  const model = {
+    page: {
+      todos: [],
+      buildType: env.buildType,
+      assetPaths: env.assetPaths,
+      stats: {
+        total: 0,
+        remaining: 0,
+        completed: 0,
+      },
+      titleLimit: 80,
+      draftTitle: "",
+      errorMessage,
+    },
+  };
+
+  res.status(statusCode).render("index", model, (error, html) => {
+    if (error) {
+      console.error(error);
+      res
+        .status(statusCode)
+        .type("text/plain; charset=utf-8")
+        .send(errorMessage);
+      return;
+    }
+
+    res.send(html);
+  });
+}
+
+const app = createApp();
+
+module.exports = app;
+module.exports.app = app;
+module.exports.createApp = createApp;
